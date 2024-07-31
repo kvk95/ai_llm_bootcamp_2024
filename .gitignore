@@ -178,4 +178,17 @@ ai_llm_bootcamp_2024_basics/data
 ai_llm_bootcamp_2024_basics/my_app
 ai_llm_bootcamp_2024_basics/pynb
 
+# 001-streamlit
+# Environments
+001-streamlit/.env
+001-streamlit/.venv
+001-streamlit/env/
+001-streamlit/venv/
+001-streamlit/ENV/
+001-streamlit/env.bak/
+001-streamlit/venv.bak/
+001-streamlit/chroma_db
+001-streamlit/data
+
+
 
