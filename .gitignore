@@ -160,3 +160,22 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# ai_llm_bootcamp_2024_basics
+# Environments
+ai_llm_bootcamp_2024_basics/.env
+ai_llm_bootcamp_2024_basics/.venv
+ai_llm_bootcamp_2024_basics/env/
+ai_llm_bootcamp_2024_basics/venv/
+ai_llm_bootcamp_2024_basics/ENV/
+ai_llm_bootcamp_2024_basics/env.bak/
+ai_llm_bootcamp_2024_basics/venv.bak/
+ai_llm_bootcamp_2024_basics/ai_llm_bootcamp_2024-env
+ai_llm_bootcamp_2024_basics/chroma_db
+ai_llm_bootcamp_2024_basics/chroma_db_169
+ai_llm_bootcamp_2024_basics/chroma_s28_172_db
+ai_llm_bootcamp_2024_basics/data
+ai_llm_bootcamp_2024_basics/my_app
+ai_llm_bootcamp_2024_basics/pynb
+
+
