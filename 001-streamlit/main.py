@@ -1,6 +1,18 @@
+import os, sys
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
+
+## Logging ##
+from utils.MyUtils import clear_terminal, logger 
+clear_terminal()
+
+## Foundation Model ##
+from utils.MyModels import BaseChatModel, LlmModel, init_llm 
+llm: BaseChatModel = init_llm(LlmModel.MISTRAL, temperature=0)
+
 import streamlit as st
 from langchain_core.prompts import PromptTemplate
-from comm_init import init_llm, LlmModel, print_to_console
 
 
 template = """
@@ -40,15 +52,6 @@ prompt = PromptTemplate(
     input_variables=["tone", "dialect", "draft"],
     template=template,
 )
-
-
-#LLM and key loading function
-def load_LLM(llmmodel:LlmModel):
-    """Logic for loading the chain you want to use should go here."""
-    # Make sure your openai_api_key is set as an environment variable
-    llm = init_llm(llmmodel)
-    return llm
-
 
 #Page title and header
 st.set_page_config(page_title="Re-write your text")
@@ -110,8 +113,6 @@ if draft_input:
     #         Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', 
     #         icon="⚠️")
     #     st.stop()
-
-    llm = load_LLM(llmmodel=LlmModel.GEMINI)
 
     prompt_with_draft = prompt.format(
         tone=option_tone, 

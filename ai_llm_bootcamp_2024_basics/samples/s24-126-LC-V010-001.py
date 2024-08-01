@@ -65,31 +65,21 @@
 # #### Use the new langchain_google_genai
 # pip install langchain_google_genai
 
-import os
-from dotenv import load_dotenv, find_dotenv
-_ = load_dotenv(find_dotenv())
+import os, sys
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
 
-# region gemini
-gemini_api_key = os.environ["gemini_api_key_vijay"]
-#gemini_api_key = os.environ["gemini_api_key"]
-from langchain_google_genai import ChatGoogleGenerativeAI
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", 
-                             google_api_key=gemini_api_key)
+## Logging ##
+from utils.MyUtils import clear_terminal, logger 
+clear_terminal()
 
-# endregion gemini
-
-# region llama3.1
-# pip install -qU langchain-ollama  
-# from langchain_ollama import ChatOllama
-# llm = ChatOllama(
-#     model="llama3.1",
-#     temperature=0,
-#     # other params...
-# )
-# endregion llama3.1
+## Foundation Model ##
+from utils.MyModels import BaseChatModel, LlmModel, init_llm 
+llm: BaseChatModel = init_llm(LlmModel.MISTRAL, temperature=0)
 
 #TODO: uncomment
-#print(llm.invoke("What was the name of Napoleon's wife?"))
+#logger.info(llm.invoke("What was the name of Napoleon's wife?"))
 
 from langchain_core.prompts import ChatPromptTemplate
 my_prompt_template = ChatPromptTemplate.from_messages([
@@ -100,7 +90,7 @@ my_prompt_template = ChatPromptTemplate.from_messages([
 #Create a chain with LCEL
 my_chain = my_prompt_template | llm 
 #TODO: uncomment
-#print(my_chain.invoke({"input": "Where was Napoleon defeated?"}))
+#logger.info(my_chain.invoke({"input": "Where was Napoleon defeated?"}))
 
 # Create an Output Parser to convert the chat message to a string
 from langchain_core.output_parsers import StrOutputParser
@@ -120,29 +110,31 @@ my_chain = my_prompt_template | llm | to_string_output_parser
 from langchain_community.document_loaders import WebBaseLoader
 my_loader = WebBaseLoader("https://aiaccelera.com/ai-consulting-for-businesses/")
 my_private_docs = my_loader.load()
-print('----------------------------------------------------------------')
-print(my_private_docs)
-print('----------------------------------------------------------------')
+logger.info('----------------------------------------------------------------')
+logger.info(my_private_docs)
+logger.info('----------------------------------------------------------------')
 
 #https://www.datacamp.com/tutorial/run-llama-3-locally
 # We will use Ollama embeddings to convert our private docs to numbers:
 
-#from langchain_community.embeddings import OllamaEmbeddings
-#my_embeddings = OllamaEmbeddings(model="llama3.1", show_progress=True)
-
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-my_embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", 
-                             google_api_key=gemini_api_key)
-
-#We will use Chroma as vector database:
-# pip install langchain_chroma
-from langchain_chroma import Chroma
-
-#We will use RecursiveCharacterTextSplitter to divide the private docs into smaller text chunks:
+#**Split the document in small chunks**
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-my_text_splitter = RecursiveCharacterTextSplitter()
-my_text_chunks = my_text_splitter.split_documents(my_private_docs)
-my_vector_database = Chroma.from_documents(my_text_chunks, my_embeddings)
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=3000,
+    chunk_overlap=400
+)
+document_chunks = text_splitter.split_documents(my_private_docs)
+logger.info(f"Now you have {len(document_chunks)} chunks.")
+
+## Embeddings ##
+from utils.MyEmbeddingFunction import SentenceEmbeddingFunction 
+my_embeddings = SentenceEmbeddingFunction()
+
+## Create vector store ChromaDB from documents ##
+from utils.MyVectorStore import chroma_from_documents 
+my_vector_database = chroma_from_documents(
+    documents=document_chunks, embedding=my_embeddings, collection_name="chroma_s24-126"
+)
 
 #Now we will create a chain that takes the question and the retrieved documents and generates an answer:
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -166,6 +158,6 @@ my_retrieval_chain = create_retrieval_chain(my_retriever, my_document_answering_
 response = my_retrieval_chain.invoke({
     "input": "Summarize the provided context in less than 100 words"
 })
-print('----------------------------------------------------------------')
-print(response["answer"])
-print('----------------------------------------------------------------')
+logger.info('----------------------------------------------------------------')
+logger.info(response["answer"])
+logger.info('----------------------------------------------------------------')
