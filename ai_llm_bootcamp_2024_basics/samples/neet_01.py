@@ -1,17 +1,24 @@
-from comm_init import init_llm, LlmModel, print_to_console
-import os
+
+
+import os, sys
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
+
+## Logging ##
+from utils.MyUtils import clear_terminal, logger 
+#clear_terminal()
+
+## Foundation Model ##
+from utils.MyModels import BaseChatModel, LlmModel, init_llm 
+llm: BaseChatModel = init_llm(LlmModel.GEMINI, temperature=0)
 
 from transformers import pipeline
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import requests
-import os
 import streamlit as st
 import json
-
-HUGGINGFACE_API_TOKEN = os.getenv("hugging_face_token")
-
-llm = init_llm(LlmModel.LLAMA)
 
 def story_generator(scenario):
     template = """
@@ -30,12 +37,15 @@ def story_generator(scenario):
 
 def neet_story_generator(neet_concept:str) -> str:
     template = """
-    Give a clear and detailed explanation of {neet_concept} from an NCERT book along with a detailed story for a 17 years old to understand the concept. 
-    Please include the characteristics of each character in the story. 
+    You are a chemistry profesor specialist whose job is to explain chemistry topics. 
+    Only explain if you are completely sure that the information given is accurate. 
+    Refuse to explain otherwise. 
+    Make sure your explanation are detailed. 
+    Give a clear and detailed explanation of {neet_concept}
+    Also include layman explanatin so it will easy for non chemistry person to understand. 
     The response should be in JSON format with three fields: 
-    'actual_concept', 
-    'story', 
-    'characteristics'.
+    'actual_explantion', 
+    'layman_explantion'
     """
     prompt = PromptTemplate(template=template, input_variables = ["neet_concept"])
     story_llm = LLMChain(llm = llm , prompt=prompt, verbose=True)
@@ -60,4 +70,4 @@ oxidation states in the first series of the transition elements? Illustrate your
 """
 story = neet_story_generator(neet_concept) # create a story
 #TODO: uncomment
-print_to_console(story)
+logger.info(story)
