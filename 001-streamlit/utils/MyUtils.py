@@ -41,10 +41,10 @@ else:
 
 # > pip install langchain
 
-# import langchain
+import langchain
 
-# langchain.debug = True
-# langchain.verbose = True
+langchain.debug = True
+langchain.verbose = True
 # endregion add langchain logging
 
 ########################################################################
