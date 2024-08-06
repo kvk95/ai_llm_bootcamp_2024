@@ -8,7 +8,8 @@ langchain-google-genai
 langchain-groq
 langchain-ollama
 langchain-openai
-pypdf
+PyPDF2
+# pysqlite3-binary
 python-dotenv
 sentence-transformers
 streamlit
