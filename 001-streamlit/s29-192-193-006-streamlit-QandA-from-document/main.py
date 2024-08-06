@@ -1,28 +1,31 @@
-import os, sys
+from utils.MyModels import BaseChatModel, LlmModel, init_llm
+from utils.MyUtils import clear_terminal, logger
+from PyPDF2 import PdfReader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chains import RetrievalQA
+import streamlit as st
+import sys
+from utils.MyVectorStore import chroma_from_documents
+from utils.MyEmbeddingFunction import SentenceEmbeddingFunction
+import os
+import sys
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 sys.path.insert(0, parent_dir_path)
 
 ## Logging ##
-from utils.MyUtils import clear_terminal, logger 
-#clear_terminal()
+# clear_terminal()
 
 ## Foundation Model ##
-from utils.MyModels import BaseChatModel, LlmModel, init_llm 
 llm: BaseChatModel = init_llm(LlmModel.LLAMA, temperature=0)
 
-from utils.MyEmbeddingFunction import SentenceEmbeddingFunction
-from utils.MyVectorStore import chroma_from_documents
 
-#__import__('pysqlite3')
-import sys
-#sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# __import__('pysqlite3')
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-import streamlit as st
-#import sqlite3
-from langchain.chains import RetrievalQA
-from langchain.text_splitter import CharacterTextSplitter
-from PyPDF2 import PdfReader
+# import sqlite3
+
 
 # Input .txt file
 # Format file
@@ -33,35 +36,37 @@ from PyPDF2 import PdfReader
 # Run QA chain
 # Output
 
+
 def generate_response(file, openai_api_key, query):
-    #format file
+    # format file
     reader = PdfReader(file)
     formatted_document = []
     for page in reader.pages:
         formatted_document.append(page.extract_text())
-    #split file
+    # split file
     text_splitter = CharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=0
     )
     docs = text_splitter.create_documents(formatted_document)
-    #create embeddings
+    # create embeddings
     embeddings = SentenceEmbeddingFunction()
-    #load to vector database
+    # load to vector database
     store = chroma_from_documents(
         documents=docs, embedding=embeddings, collection_name="chroma_db_thirukural_193"
     )
 
-    #store = FAISS.from_documents(docs, embeddings)
-    
-    #create retrieval chain
+    # store = FAISS.from_documents(docs, embeddings)
+
+    # create retrieval chain
     retrieval_chain = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
         retriever=store.as_retriever()
     )
-    #run chain with query
+    # run chain with query
     return retrieval_chain.run(query)
+
 
 st.set_page_config(
     page_title="Q&A from a long PDF Document"
@@ -93,10 +98,10 @@ with st.form(
         "Submit",
         disabled=not (uploaded_file and query_text)
     )
-    if submitted: #and openai_api_key.startswith("sk-"):
+    if submitted:  # and openai_api_key.startswith("sk-"):
         with st.spinner(
             "Wait, please. I am working on it..."
-            ):
+        ):
             response = generate_response(
                 uploaded_file,
                 openai_api_key,
@@ -104,6 +109,6 @@ with st.form(
             )
             result.append(response)
             del openai_api_key
-            
+
 if len(result):
     st.info(response)
