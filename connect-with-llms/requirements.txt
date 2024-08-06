@@ -11,8 +11,12 @@ langchain_ollama
 langchain_openai
 langchain_groq
 langchain_community
+langchainhub
 coloredlogs
 chromadb
 langchain_chroma
 pypdf
 wikipedia
+streamlit
+docarray
+tiktoken
