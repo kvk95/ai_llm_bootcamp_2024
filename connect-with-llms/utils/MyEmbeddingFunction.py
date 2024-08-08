@@ -19,7 +19,7 @@ class SentenceEmbeddingFunction:
         # download model locally to configured path
         if not os.path.exists(embeddings_model_path):
             # If not, download and save the model
-            model = SentenceTransformer(embeddings_model_name)
+            model = SentenceTransformer(model_name_or_path=embeddings_model_name)
             model.save(embeddings_model_path)
 
         self.model = SentenceTransformer(self.transformer_model_path)

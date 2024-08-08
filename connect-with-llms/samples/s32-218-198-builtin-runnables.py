@@ -54,8 +54,6 @@ response = chain.invoke({"name1": "Jordam", "name": "Abram"})
 logger.info(response)
 
 
-from operator import itemgetter
-
 chain = RunnableParallel(
     {
         "addition": lambda x: x["d1"] + x["d2"],
@@ -65,47 +63,47 @@ chain = RunnableParallel(
 response = chain.invoke({"d1": 5, "d2": 10, "d3": 20})
 logger.info(response)
 
-from utils.MyVectorStore import chroma_from_texts
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from utils.MyEmbeddingFunction import SentenceEmbeddingFunction
+# from utils.MyVectorStore import chroma_from_texts
+# from langchain_core.output_parsers import StrOutputParser
+# from langchain_core.prompts import ChatPromptTemplate
+# from langchain_core.runnables import RunnablePassthrough
+# from utils.MyEmbeddingFunction import SentenceEmbeddingFunction
 
 
-vectorstore = chroma_from_texts(
-    ["AI Accelera has trained more than 3,000 Enterprise Alumni."],
-    embedding=SentenceEmbeddingFunction(),
-    persist_directory="s32-218-198-builtin-runnables",
-    collection_name="s32-218-198-builtin-runnables",
-)
-retriever = vectorstore.as_retriever()
+# vectorstore = chroma_from_texts(
+#     ["AI Accelera has trained more than 3,000 Enterprise Alumni."],
+#     embedding=SentenceEmbeddingFunction(),
+#     persist_directory="s32-218-198-builtin-runnables",
+#     collection_name="s32-218-198-builtin-runnables",
+# )
+# retriever = vectorstore.as_retriever()
 
-template = """Answer the question based only on the following context:
-{context}
+# template = """Answer the question based only on the following context:
+# {context}
 
-Question: {question}
+# Question: {question}
 
-Answer in the following language: {language}
-"""
+# Answer in the following language: {language}
+# """
 
-prompt = ChatPromptTemplate.from_template(template)
+# prompt = ChatPromptTemplate.from_template(template)
 
-chain = (
-    {
-        "context": itemgetter("question") | retriever,
-        "question": itemgetter("question"),
-        "language": itemgetter("language"),
-    }
-    | prompt
-    | model
-    | StrOutputParser()
-)
+# chain = (
+#     {
+#         "context": itemgetter("question") | retriever,
+#         "question": itemgetter("question"),
+#         "language": itemgetter("language"),
+#     }
+#     | prompt
+#     | model
+#     | StrOutputParser()
+# )
 
-response = chain.invoke(
-    {
-        "question": "How many Enterprise Alumni has trained AI Accelera?",
-        "language": "Pirate English",
-    }
-)
+# response = chain.invoke(
+#     {
+#         "question": "How many Enterprise Alumni has trained AI Accelera?",
+#         "language": "Pirate English",
+#     }
+# )
 
-logger.info(response)
+# logger.info(response)

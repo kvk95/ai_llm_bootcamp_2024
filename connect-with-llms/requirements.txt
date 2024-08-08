@@ -12,6 +12,8 @@ langchain_openai
 langchain_groq
 langchain_community
 langchainhub
+langserve
+sse_starlette
 coloredlogs
 chromadb
 langchain_chroma
@@ -20,3 +22,5 @@ wikipedia
 streamlit
 docarray
 tiktoken
+unstructured[all-docs]
+openpyxl

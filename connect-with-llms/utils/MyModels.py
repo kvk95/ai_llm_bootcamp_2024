@@ -27,7 +27,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 # Get the value of a specific environment variable
-def init_llm_gemini(modelname: str, temperature: float)-> BaseChatModel:
+def init_llm_gemini(modelname: str, temperature: float) -> BaseChatModel:
     google_api_key = os.getenv("GEMINI_API_KEY")
 
     return ChatGoogleGenerativeAI(
@@ -40,12 +40,9 @@ def init_llm_gemini(modelname: str, temperature: float)-> BaseChatModel:
 # region ollama llm
 from langchain_ollama import ChatOllama
 
-def init_llm_ollama(modelname: str, temperature: float)-> BaseChatModel:
-    return ChatOllama(
-        model=modelname,
-        temperature=temperature,
-        num_gpu=1
-    )
+
+def init_llm_ollama(modelname: str, temperature: float) -> BaseChatModel:
+    return ChatOllama(model=modelname, temperature=temperature, num_gpu=1)
 
 
 # endregion ollama llm
@@ -54,7 +51,7 @@ def init_llm_ollama(modelname: str, temperature: float)-> BaseChatModel:
 from langchain_openai import ChatOpenAI
 
 
-def init_llm_openai(modelname: str, temperature: float)-> BaseChatModel:
+def init_llm_openai(modelname: str, temperature: float) -> BaseChatModel:
     return ChatOpenAI(model=modelname, temperature=temperature)
 
 
@@ -64,7 +61,7 @@ def init_llm_openai(modelname: str, temperature: float)-> BaseChatModel:
 from langchain_groq import ChatGroq
 
 
-def init_llm_groq(modelname: str, temperature: float)-> BaseChatModel:
+def init_llm_groq(modelname: str, temperature: float) -> BaseChatModel:
     return ChatGroq(model=modelname, temperature=temperature)
 
 
